@@ -1,0 +1,64 @@
+inboundShortMessage:
+  name: {{flow_name}}
+  description: ""
+  division: {{division}}
+  startUpRef: "/inboundShortMessage/states/state[Initial State_10]"
+  defaultLanguage: {{default_language}}
+  supportedLanguages:
+    en-us:
+      defaultLanguageSkill:
+        noValue: true
+  settingsErrorHandling:
+    errorHandling:
+      disconnect:
+        none: true
+  states:
+    - state:
+        name: Initial State
+        refId: Initial State_10
+        variables:
+          - stringVariable:
+              name: State.Email
+              initialValue:
+                noValue: true
+              isInput: false
+              isOutput: false
+        actions:
+          - callBotFlow:
+              name: Call Bot Flow
+              inputText:
+                exp: Message.Message.body
+              exitReason:
+                noValue: true
+              intent:
+                noValue: true
+              botFlow:
+                {{bot_flow_name}}:
+                  ver_latestPublished:
+                    inputs:
+                      Slot.Email:
+                        noValue: true
+                    outputs:
+                      Slot.Email:
+                        var: State.Email
+          - setParticipantData:
+              name: Set Participant Data
+              attributes:
+                - attribute:
+                    name:
+                      lit: Email
+                    value:
+                      exp: State.Email
+          - transferToAcd:
+              name: Transfer to ACD
+              targetQueue:
+                lit:
+                  name: {{queue_name}}
+              priority:
+                lit: 0
+              preferredAgents:
+                noValue: true
+              languageSkill:
+                noValue: true
+              directAgent:
+                noValue: true
